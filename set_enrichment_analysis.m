@@ -10,6 +10,8 @@ function set_enrichment_analysis(group1,group2,rois,annotations,filename)
 %           filename:       name of the output file that you choose
 %                           Ex: '<Study>_Functional_Determination.mat'                            
 
+%% Version Control: Charles Burton, IU School of Medicine, 2024
+
 %% Load in tier1 connectomic output data
 exp = load(group1);
 ctrl = load(group2);
