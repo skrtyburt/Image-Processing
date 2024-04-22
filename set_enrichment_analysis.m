@@ -15,8 +15,8 @@ function set_enrichment_analysis(group1,group2,rois,annotations,filename)
 %% Load in tier1 connectomic output data
 exp = load(group1);
 ctrl = load(group2);
-load(annotations);
-load(rois);
+load(annotations,annotations);
+load(rois); %#ok<*LOAD>
 beta = array2table(annotations);
 location = pwd;
 outlocation = strcat(location,'/',filename);
@@ -34,7 +34,7 @@ data_in_ctrl = ctrl.cellData(2:rw2,2:cl2);
 %each cohort for group 1
 Mean_Region_Exp={};
 for i=1:length(exp.cNames)
-    Mean_Region_Exp{1,i} = exp.cNames(1,i);
+    Mean_Region_Exp{1,i} = exp.cNames(1,i); %#ok<*AGROW>
 end
 
 for i=1:length(exp.rNames)
@@ -47,7 +47,6 @@ for i=1:exp_factor1
         Mean_Region_Exp{i+1,j+1} = cohort_avg;
     end
 end
-outputval1 = Mean_Region_Exp;
 
 % Do the same thing for group 2
 Mean_Region_Ctrl={};
@@ -65,7 +64,6 @@ for i=1:ctrl_factor1
         Mean_Region_Ctrl{i+1,j+1} = cohort_avg;
     end
 end
-outputval2 = Mean_Region_Ctrl;
 
 %% Create a ranked list of differential regional SUVR between two comparison groups
 % NOTE: We want to be able to specify this from the input in some capacity
@@ -134,7 +132,6 @@ end
 % module
 
 [rw,cl]=size(sorted_diff);
-num_cohorts = (rw-1)*(cl-1);
 module_sorted = {};
 complement_sorted = {};
 
@@ -189,7 +186,6 @@ for i=2:rw
     end
 end
 [~,cl] = size(module_sorted);
-[~,cl_complement] = size(complement_sorted);
 
 % column label generation
 for i=2:cl
@@ -263,15 +259,15 @@ for i=2:rw
             end
         set_of_scores = ["auditory" auditory; "learning" learning; "motor" motor; "perception" perception; "sensory" sensory; "integration" integration; "visual" visual];
         fcn_scores{i,j} = set_of_scores;
-        auditory = 0;
+        auditory = 0; %#ok<*NASGU>
         learning = 0;
         motor = 0;
         perception = 0;
         sensory = 0;
         integration = 0;
         visual = 0;
+        end
     end
-end
 end
 
 %function score computation for the module's complement
@@ -323,8 +319,8 @@ for i=2:rw_complement
         sensory = 0;
         integration = 0;
         visual = 0;
+        end
     end
-end
 end
 
 %% Significance Testing
@@ -505,8 +501,8 @@ for i=2:rw
         sensory = [];
         integration = [];
         visual = [];
+        end
     end
-end
 end
 
 %function score computation for the module's complement
@@ -632,9 +628,6 @@ for i=2:rw
     ks_global{i,1} = rowlabel;
 end
 ks_global{1,1} = "Two-sample Global KS Test";
-
-%% Add in a display section that immediately notifies you if you have significant outputs in your testing
-
 
 %% Write out to .mat
 save(outlocation, "ks_global","ks_complement","exp","ctrl")
